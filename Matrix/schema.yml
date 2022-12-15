@@ -1,0 +1,111 @@
+openapi: 3.0.3
+info:
+  title: API_matrix
+  version: 1.0.0
+  description: API THAT COMPUTES OWN NUMBERS AND VECTORS
+paths:
+  /calculator/inverse/:
+    get:
+      operationId: calculator_inverse_retrieve
+      description: Calculates inverse matrix
+      parameters:
+      - in: query
+        name: matrix
+        schema:
+          type: string
+        description: matrix
+        required: true
+        examples:
+          2x2Matrix:
+            value: 1_2*3_4
+            summary: 2x2 matrix
+          3x3Matrix:
+            value: 1_2_3*4_5_6*9_4_2
+            summary: 3x3 matrix
+      - in: query
+        name: size
+        schema:
+          type: integer
+        description: matrix size
+        required: true
+      tags:
+      - calculator
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '400':
+          content:
+            application/json:
+              schema:
+                type: string
+              examples:
+                NoSize:
+                  value: Размер не указан
+                  summary: No size
+                InvalidMatrix:
+                  value: Матрица неверного размера
+                  summary: Invalid matrix
+          description: ''
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Matrix'
+              examples:
+                2x2Matrix:
+                  value:
+                    size: 2
+                    matrix:
+                    - - 1.0
+                      - 2.0
+                    - - 2.0
+                      - 1.0
+                    count:
+                    - 1
+                    - 2
+                    vec:
+                    - - -0.33
+                      - 0.66
+                    - - 0.66
+                      - -0.33
+                  summary: 2x2 matrix
+          description: ''
+components:
+  schemas:
+    Matrix:
+      type: object
+      properties:
+        size:
+          type: integer
+        matrix:
+          type: array
+          items:
+            type: array
+            items:
+              type: number
+              format: double
+        count:
+          type: array
+          items: {}
+        vec:
+          type: array
+          items:
+            type: array
+            items:
+              type: number
+              format: double
+      required:
+      - count
+      - matrix
+      - size
+      - vec
+  securitySchemes:
+    basicAuth:
+      type: http
+      scheme: basic
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: sessionid
